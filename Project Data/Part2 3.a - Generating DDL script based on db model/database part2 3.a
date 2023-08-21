@@ -1,0 +1,435 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema my_hospital
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema my_hospital
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `my_hospital` DEFAULT CHARACTER SET utf8mb3 ;
+USE `my_hospital` ;
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`address`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`address` (
+  `Address_id` INT NOT NULL AUTO_INCREMENT,
+  `Address1` VARCHAR(45) NOT NULL,
+  `City` VARCHAR(45) NOT NULL,
+  `PostCode` VARCHAR(45) NULL DEFAULT NULL,
+  `CreatedOn` DATETIME(6) NULL DEFAULT NULL,
+  `ModifiedOn` DATETIME(6) NULL DEFAULT NULL,
+  `Addresscol` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`Address_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 7
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`address_type`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`address_type` (
+  `AddressType_id` INT NOT NULL AUTO_INCREMENT,
+  `Type` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`AddressType_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`department`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`department` (
+  `Department_id` INT NOT NULL AUTO_INCREMENT,
+  `DepartmentName` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Department_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`diseases`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`diseases` (
+  `Diseases_id` INT NOT NULL AUTO_INCREMENT,
+  `DiseasesName` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Diseases_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`employee`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`employee` (
+  `Employee_id` INT NOT NULL AUTO_INCREMENT,
+  `EmployeeNumber` VARCHAR(45) NULL DEFAULT NULL,
+  `Email_id` VARCHAR(45) NULL DEFAULT NULL,
+  `Password` VARCHAR(45) NULL DEFAULT NULL,
+  `CreatedON` DATETIME(6) NULL DEFAULT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`Employee_id`),
+  INDEX `fk_employee_employee1_idx` (`created_by` ASC) VISIBLE,
+  CONSTRAINT `fk_employee_employee1`
+    FOREIGN KEY (`created_by`)
+    REFERENCES `my_hospital`.`employee` (`Employee_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`employee_department`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`employee_department` (
+  `department_Department_id` INT NOT NULL,
+  `employee_Employee_id` INT NOT NULL,
+  PRIMARY KEY (`department_Department_id`, `employee_Employee_id`),
+  INDEX `fk_employee department_employee1_idx` (`employee_Employee_id` ASC) VISIBLE,
+  CONSTRAINT `fk_employee department_department1`
+    FOREIGN KEY (`department_Department_id`)
+    REFERENCES `my_hospital`.`department` (`Department_id`),
+  CONSTRAINT `fk_employee department_employee1`
+    FOREIGN KEY (`employee_Employee_id`)
+    REFERENCES `my_hospital`.`employee` (`Employee_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`role`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`role` (
+  `Role_id` INT NOT NULL AUTO_INCREMENT,
+  ` RoleDesc` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`Role_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`employee_details`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`employee_details` (
+  `EmployeeDetails_id` INT NOT NULL AUTO_INCREMENT,
+  `FirstName` VARCHAR(45) NOT NULL,
+  `LastName` VARCHAR(45) NOT NULL,
+  `PhoneNumber` VARCHAR(20) NULL DEFAULT NULL,
+  `Role_id` INT NULL DEFAULT NULL,
+  `CreatedOn` DATETIME(6) NULL DEFAULT NULL,
+  `ModifiedON` DATETIME(6) NULL DEFAULT NULL,
+  `EmployeeDetailscol` VARCHAR(45) NULL DEFAULT NULL,
+  `employee_Employee_id` INT NOT NULL,
+  PRIMARY KEY (`EmployeeDetails_id`),
+  INDEX `Role_id_idx` (`Role_id` ASC) VISIBLE,
+  INDEX `fk_employee_details_employee1_idx` (`employee_Employee_id` ASC) VISIBLE,
+  CONSTRAINT `fk_employee_details_employee1`
+    FOREIGN KEY (`employee_Employee_id`)
+    REFERENCES `my_hospital`.`employee` (`Employee_id`),
+  CONSTRAINT `Role_id`
+    FOREIGN KEY (`Role_id`)
+    REFERENCES `my_hospital`.`role` (`Role_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`employeeadreessmapping`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`employeeadreessmapping` (
+  `EmployeeadreessMapping_id` INT NOT NULL AUTO_INCREMENT,
+  `AddressTypeID` INT NULL DEFAULT NULL,
+  `Index` INT NULL DEFAULT NULL,
+  `CreatedON` DATETIME(6) NULL DEFAULT NULL,
+  `ModifiedON` DATETIME(6) NULL DEFAULT NULL,
+  `employee_details_EmployeeDetails_id` INT NOT NULL,
+  `address_Address_id` INT NOT NULL,
+  PRIMARY KEY (`EmployeeadreessMapping_id`),
+  INDEX `AddressType_id_idx` (`AddressTypeID` ASC) VISIBLE,
+  INDEX `fk_employeeadreessmapping_employee_details1_idx` (`employee_details_EmployeeDetails_id` ASC) VISIBLE,
+  INDEX `fk_employeeadreessmapping_address1_idx` (`address_Address_id` ASC) VISIBLE,
+  CONSTRAINT `AddressType_id`
+    FOREIGN KEY (`AddressTypeID`)
+    REFERENCES `my_hospital`.`address_type` (`AddressType_id`),
+  CONSTRAINT `fk_employeeadreessmapping_address1`
+    FOREIGN KEY (`address_Address_id`)
+    REFERENCES `my_hospital`.`address` (`Address_id`),
+  CONSTRAINT `fk_employeeadreessmapping_employee_details1`
+    FOREIGN KEY (`employee_details_EmployeeDetails_id`)
+    REFERENCES `my_hospital`.`employee_details` (`EmployeeDetails_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`patient`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`patient` (
+  `Patient_Id` INT NOT NULL AUTO_INCREMENT,
+  `PatientRegistrationNo` VARCHAR(45) NULL DEFAULT NULL,
+  `FirstName` VARCHAR(45) NULL DEFAULT NULL,
+  `LastName` VARCHAR(45) NULL DEFAULT NULL,
+  `DateOfBirth` DATE NULL DEFAULT NULL,
+  `Gender` VARCHAR(45) NULL DEFAULT NULL,
+  `PhoneNumber` VARCHAR(45) NULL DEFAULT NULL,
+  `Email_id` VARCHAR(45) NULL DEFAULT NULL,
+  `Height` VARCHAR(45) NULL DEFAULT NULL,
+  `Weight` VARCHAR(45) NULL DEFAULT NULL,
+  `BloodGroup` VARCHAR(45) NULL DEFAULT NULL,
+  `CreatedOn` DATE NULL DEFAULT NULL,
+  `ModifiedOn` DATE NULL DEFAULT NULL,
+  PRIMARY KEY (`Patient_Id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`feedback`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`feedback` (
+  `Feedback_id` INT NOT NULL AUTO_INCREMENT,
+  `Comment` VARCHAR(45) NULL DEFAULT NULL,
+  `Rating` VARCHAR(45) NULL DEFAULT NULL,
+  `CreatedOn` DATETIME(6) NULL DEFAULT NULL,
+  `employee_Employee_id` INT NOT NULL,
+  `patient_Patient_Id` INT NOT NULL,
+  PRIMARY KEY (`Feedback_id`),
+  INDEX `fk_feedback_employee1_idx` (`employee_Employee_id` ASC) VISIBLE,
+  INDEX `fk_feedback_patient1_idx` (`patient_Patient_Id` ASC) VISIBLE,
+  CONSTRAINT `fk_feedback_employee1`
+    FOREIGN KEY (`employee_Employee_id`)
+    REFERENCES `my_hospital`.`employee` (`Employee_id`),
+  CONSTRAINT `fk_feedback_patient1`
+    FOREIGN KEY (`patient_Patient_Id`)
+    REFERENCES `my_hospital`.`patient` (`Patient_Id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`lab_test`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`lab_test` (
+  `LabTest_id` INT NOT NULL AUTO_INCREMENT,
+  `TestName` VARCHAR(45) NULL DEFAULT NULL,
+  `MinValue` VARCHAR(10) NULL DEFAULT NULL,
+  `MaxValue` VARCHAR(10) NULL DEFAULT NULL,
+  `Lab_testcol` VARCHAR(45) NULL DEFAULT NULL,
+  `CalUnit` VARCHAR(30) NULL DEFAULT NULL,
+  PRIMARY KEY (`LabTest_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`patient_appointment`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`patient_appointment` (
+  `AppoitmentDate` DATETIME(6) NOT NULL,
+  `IsComplete` TINYINT NULL DEFAULT NULL,
+  `CreatedON` VARCHAR(45) NULL DEFAULT NULL,
+  `Patient_appointmentcol` VARCHAR(45) NULL DEFAULT NULL,
+  `employee_Employee_id` INT NOT NULL,
+  `patient_Patient_Id` INT NOT NULL,
+  `created by` INT NOT NULL,
+  PRIMARY KEY (`AppoitmentDate`, `employee_Employee_id`, `patient_Patient_Id`),
+  INDEX `fk_patient_appointment_employee1_idx` (`employee_Employee_id` ASC) VISIBLE,
+  INDEX `fk_patient_appointment_patient1_idx` (`patient_Patient_Id` ASC) VISIBLE,
+  INDEX `fk_patient_appointment_employee2_idx` (`created by` ASC) VISIBLE,
+  CONSTRAINT `fk_patient_appointment_employee1`
+    FOREIGN KEY (`employee_Employee_id`)
+    REFERENCES `my_hospital`.`employee` (`Employee_id`),
+  CONSTRAINT `fk_patient_appointment_employee2`
+    FOREIGN KEY (`created by`)
+    REFERENCES `my_hospital`.`employee` (`Employee_id`),
+  CONSTRAINT `fk_patient_appointment_patient1`
+    FOREIGN KEY (`patient_Patient_Id`)
+    REFERENCES `my_hospital`.`patient` (`Patient_Id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`patient_insurance`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`patient_insurance` (
+  `PatientInsurance_id` INT NOT NULL AUTO_INCREMENT,
+  `Patient_id` INT NULL DEFAULT NULL,
+  `ProviderName` VARCHAR(45) NULL DEFAULT NULL,
+  `GroupNumber` VARCHAR(45) NULL DEFAULT NULL,
+  `InsuranceNumber` VARCHAR(45) NULL DEFAULT NULL,
+  `InNetworkCoPay` INT NULL DEFAULT NULL,
+  `OutNetworkDcPay` INT NULL DEFAULT NULL,
+  `StartDate` DATE NULL DEFAULT NULL,
+  `EndDate` INT NULL DEFAULT NULL,
+  `CreatedOn` DATE NULL DEFAULT NULL,
+  `ModifiedOn` DATE NULL DEFAULT NULL,
+  PRIMARY KEY (`PatientInsurance_id`),
+  INDEX `Patient_id_idx` (`Patient_id` ASC) VISIBLE,
+  CONSTRAINT `Patient_id`
+    FOREIGN KEY (`Patient_id`)
+    REFERENCES `my_hospital`.`patient` (`Patient_Id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`patient_register`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`patient_register` (
+  `iPatient_regester_id` INT NOT NULL AUTO_INCREMENT,
+  `admittedOn` DATE NULL DEFAULT NULL,
+  `discargeOn` DATE NULL DEFAULT NULL,
+  `patietisurance_id` INT NULL DEFAULT NULL,
+  `RoomNumber` VARCHAR(45) NULL DEFAULT NULL,
+  `patient_Patient_Id` INT NOT NULL,
+  PRIMARY KEY (`iPatient_regester_id`),
+  INDEX `ientinsurance_id_idx` (`patietisurance_id` ASC) VISIBLE,
+  INDEX `fk_patient_register_patient1_idx` (`patient_Patient_Id` ASC) VISIBLE,
+  CONSTRAINT `fk_patient_register_patient1`
+    FOREIGN KEY (`patient_Patient_Id`)
+    REFERENCES `my_hospital`.`patient` (`Patient_Id`),
+  CONSTRAINT `ientinsurance_id`
+    FOREIGN KEY (`patietisurance_id`)
+    REFERENCES `my_hospital`.`patient_insurance` (`PatientInsurance_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`patient_attendant`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`patient_attendant` (
+  `employee_Employee_id` INT NOT NULL,
+  `patient_register_iPatient_regester_id` INT NOT NULL,
+  PRIMARY KEY (`employee_Employee_id`, `patient_register_iPatient_regester_id`),
+  INDEX `fk_patient_attendant_patient_register1_idx` (`patient_register_iPatient_regester_id` ASC) VISIBLE,
+  CONSTRAINT `fk_patient_attendant_employee1`
+    FOREIGN KEY (`employee_Employee_id`)
+    REFERENCES `my_hospital`.`employee` (`Employee_id`),
+  CONSTRAINT `fk_patient_attendant_patient_register1`
+    FOREIGN KEY (`patient_register_iPatient_regester_id`)
+    REFERENCES `my_hospital`.`patient_register` (`iPatient_regester_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`patientaddressmapping`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`patientaddressmapping` (
+  `PatientAddressMapping_id` INT NOT NULL AUTO_INCREMENT,
+  `AddressType_id` INT NULL DEFAULT NULL,
+  `Address_id` INT NULL DEFAULT NULL,
+  `Index` INT NULL DEFAULT NULL,
+  `CreatedOn` DATE NULL DEFAULT NULL,
+  `ModifiedOn` DATE NULL DEFAULT NULL,
+  `patient_Patient_Id` INT NOT NULL,
+  PRIMARY KEY (`PatientAddressMapping_id`),
+  INDEX `Address_id_idx` (`Address_id` ASC) VISIBLE,
+  INDEX `AddressType_idx` (`AddressType_id` ASC) VISIBLE,
+  INDEX `fk_patientaddressmapping_patient1_idx` (`patient_Patient_Id` ASC) VISIBLE,
+  CONSTRAINT `Address_id`
+    FOREIGN KEY (`Address_id`)
+    REFERENCES `my_hospital`.`address` (`Address_id`),
+  CONSTRAINT `AddressType`
+    FOREIGN KEY (`AddressType_id`)
+    REFERENCES `my_hospital`.`address_type` (`AddressType_id`),
+  CONSTRAINT `fk_patientaddressmapping_patient1`
+    FOREIGN KEY (`patient_Patient_Id`)
+    REFERENCES `my_hospital`.`patient` (`Patient_Id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`patient_billing`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`patient_billing` (
+  `PatientBilling_id` INT NOT NULL AUTO_INCREMENT,
+  `PatientRegister_id` INT NOT NULL,
+  `TransactionDesc` VARCHAR(45) NOT NULL,
+  `Amount` DECIMAL(10,0) NULL DEFAULT NULL,
+  `GeneratedDate` DATE NULL DEFAULT NULL,
+  `Type` VARCHAR(45) NULL DEFAULT NULL,
+  `PatientAddress_id` INT NULL DEFAULT NULL,
+  `PaymentType` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`PatientBilling_id`),
+  INDEX `PatientRegister_id_idx` (`PatientRegister_id` ASC) VISIBLE,
+  INDEX `PatientAddress_id_idx` (`PatientAddress_id` ASC) VISIBLE,
+  CONSTRAINT `PatientAddress_id`
+    FOREIGN KEY (`PatientAddress_id`)
+    REFERENCES `my_hospital`.`patientaddressmapping` (`PatientAddressMapping_id`),
+  CONSTRAINT `PatientRegister_id`
+    FOREIGN KEY (`PatientRegister_id`)
+    REFERENCES `my_hospital`.`patient_register` (`iPatient_regester_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`patient_diseases`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`patient_diseases` (
+  `patient_register_iPatient_regester_id` INT NOT NULL,
+  `diseases_Diseases_id` INT NOT NULL,
+  PRIMARY KEY (`patient_register_iPatient_regester_id`, `diseases_Diseases_id`),
+  INDEX `fk_patient_diseases_diseases1_idx` (`diseases_Diseases_id` ASC) VISIBLE,
+  CONSTRAINT `fk_patient_diseases_diseases1`
+    FOREIGN KEY (`diseases_Diseases_id`)
+    REFERENCES `my_hospital`.`diseases` (`Diseases_id`),
+  CONSTRAINT `fk_patient_diseases_patient_register1`
+    FOREIGN KEY (`patient_register_iPatient_regester_id`)
+    REFERENCES `my_hospital`.`patient_register` (`iPatient_regester_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `my_hospital`.`patientlabreport`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `my_hospital`.`patientlabreport` (
+  `PatientLabReport_id` INT NOT NULL AUTO_INCREMENT,
+  `TestValue` VARCHAR(45) NULL DEFAULT NULL,
+  `Comment` VARCHAR(45) NULL DEFAULT NULL,
+  `lab_test_LabTest_id` INT NOT NULL,
+  `patient_register_iPatient_regester_id` INT NOT NULL,
+  PRIMARY KEY (`PatientLabReport_id`),
+  INDEX `fk_patientlabreport_lab_test1_idx` (`lab_test_LabTest_id` ASC) VISIBLE,
+  INDEX `fk_patientlabreport_patient_register1_idx` (`patient_register_iPatient_regester_id` ASC) VISIBLE,
+  CONSTRAINT `fk_patientlabreport_lab_test1`
+    FOREIGN KEY (`lab_test_LabTest_id`)
+    REFERENCES `my_hospital`.`lab_test` (`LabTest_id`),
+  CONSTRAINT `fk_patientlabreport_patient_register1`
+    FOREIGN KEY (`patient_register_iPatient_regester_id`)
+    REFERENCES `my_hospital`.`patient_register` (`iPatient_regester_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
